@@ -1,0 +1,21 @@
+<div class="cinema-container">
+  <h2>À l'affiche cette semaine</h2>
+
+  <button class="btn-seed" (click)="ajouterFilmTest()">Ajouter un film de test</button>
+
+  <div *ngIf="films.length === 0" class="no-films">
+    <p>Aucun film disponible pour le moment ou le serveur est hors ligne.</p>
+  </div>
+
+  <div class="films-grid" *ngIf="films.length > 0">
+    <div class="film-card" *ngFor="let film of films">
+      <div class="film-badge">{{ film.genre }}</div>
+      <h3>{{ film.titre }}</h3>
+      <p class="description">{{ film.description }}</p>
+      <div class="film-footer">
+        <span>{{ film.dureeMinutes }} min</span>
+        <span>{{ film.ageMinimum }}+ ans</span>
+      </div>
+    </div>
+  </div>
+</div>

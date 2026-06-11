@@ -1,0 +1,18 @@
+@CinemaBackend_HostAddress = http://localhost:5062
+
+### 1. Récupérer tous les films (GET)
+GET {{CinemaBackend_HostAddress}}/api/films
+Accept: application/json
+
+###
+### 2. Ajouter un nouveau film (POST)
+POST {{CinemaBackend_HostAddress}}/api/films
+Content-Type: application/json
+
+{
+  "titre": "Inception",
+  "description": "Un voleur qui infiltre les reves pour y implanter une idee.",
+  "genre": "Science-Fiction",
+  "dureeMinutes": 148,
+  "ageMinimum": 12
+}

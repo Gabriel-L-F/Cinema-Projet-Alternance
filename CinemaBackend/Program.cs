@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using CinemaBackend.Data; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
 
 builder.Services.AddDbContext<CinemaBackend.Data.CinemaDbContext>(options =>
     options.UseInMemoryDatabase("CinemaDb"));
@@ -30,4 +32,13 @@ if (app.Environment.IsDevelopment())
 
 app.MapControllers();
 
-app.Run();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<CinemaDbContext>();
+    var httpClientFactory = services.GetRequiredService<IHttpClientFactory>();
+    
+    await DataSeeder.SeedMoviesAsync(context, httpClientFactory);
+}
+
+app.Run(); 

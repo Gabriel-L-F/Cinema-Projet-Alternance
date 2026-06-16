@@ -1,0 +1,130 @@
+.chat-trigger-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.chat-window {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 350px;
+  height: 500px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+  border: 1px solid #e0e0e0;
+  font-family: sans-serif;
+
+  .chat-header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+
+    h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+    small {
+      opacity: 0.8;
+    }
+  }
+
+  .chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .message-bubble {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.4;
+
+      p {
+        margin: 0;
+      }
+
+      &.ia {
+        background-color: #e9ecef;
+        color: #212529;
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+        
+        &.chargement {
+          font-style: italic;
+          opacity: 0.7;
+        }
+      }
+
+      &.user {
+        background-color: #007bff;
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 4px;
+      }
+
+      .message-date {
+        font-size: 10px;
+        opacity: 0.6;
+        display: block;
+        text-align: right;
+        margin-top: 4px;
+      }
+    }
+  }
+
+  .chat-input-area {
+    display: flex;
+    padding: 10px;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    button {
+      background: none;
+      border: none;
+      color: #007bff;
+      font-weight: bold;
+      padding: 0 10px;
+      cursor: pointer;
+
+      &:disabled {
+        color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

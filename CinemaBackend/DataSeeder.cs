@@ -9,16 +9,19 @@ using CinemaBackend.Models;
 
 public static class DataSeeder
 {
-    private const string TmdbToken = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4NjExNDdhY2E2YWM2YjVhMGZiNGM2MTRkMGZjMWMxYSIsIm5iZiI6MTc4MTE3MjU5OC4xMTM5OTk4LCJzdWIiOiI2YTJhODk3NmEyMDZlY2MxYjhmYzM0YzgiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.U8VLc6uCqvZb9lRM6uq9aD_IIsh_57WfXqgs0dvNLDY";
-
-    public static async Task SeedMoviesAsync(CinemaDbContext context, IHttpClientFactory httpClientFactory)
+    public static async Task SeedMoviesAsync(CinemaDbContext context, IHttpClientFactory httpClientFactory, string? tmdbToken)
     {
         if (context.Films.Any()) return;
 
-        var client = httpClientFactory.CreateClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TmdbToken);
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        if (string.IsNullOrEmpty(tmdbToken))
+        {
+            Console.WriteLine("--> Erreur : Le token TMDB est introuvable dans appsettings.Development.json");
+            return;
+        }
 
+        var client = httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tmdbToken);
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         try
         {
             var response = await client.GetAsync("https://api.themoviedb.org/3/movie/popular?language=fr-FR&page=1");

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,6 +10,29 @@ using CinemaBackend.Models;
 
 public static class DataSeeder
 {
+    private static readonly Dictionary<int, string> TMDBGenresEnFrancais = new()
+    {
+        { 28, "Action" },
+        { 12, "Aventure" },
+        { 16, "Animation" },
+        { 35, "Comédie" },
+        { 80, "Policier" },
+        { 99, "Documentaire" },
+        { 18, "Drame" },
+        { 10751, "Famille" },
+        { 14, "Fantastique" },
+        { 36, "Histoire" },
+        { 27, "Horreur" },
+        { 10402, "Musique" },
+        { 9648, "Mystère" },
+        { 10749, "Romance" },
+        { 878, "Science-Fiction" },
+        { 10770, "Téléfilm" },
+        { 53, "Thriller" },
+        { 10752, "Guerre" },
+        { 37, "Western" }
+    };
+
     public static async Task SeedMoviesAsync(CinemaDbContext context, IHttpClientFactory httpClientFactory, string? tmdbToken)
     {
         if (context.Films.Any()) return;
@@ -39,20 +63,36 @@ public static class DataSeeder
                     int randomDuree = random.Next(90, 160); 
                     int randomAge = random.Next(0, 3) switch { 0 => 0, 1 => 12, _ => 16 };
 
+                    string? tmdbPosterPath = element.TryGetProperty("poster_path", out var posterProp) 
+                        ? posterProp.GetString() 
+                        : null;
+
+                    string nomDuGenre = "Cinéma"; 
+                    if (element.TryGetProperty("genre_ids", out var genreIdsProp) && genreIdsProp.GetArrayLength() > 0)
+                    {
+                        int premierGenreId = genreIdsProp.EnumerateArray().First().GetInt32();
+                        
+                        if (TMDBGenresEnFrancais.TryGetValue(premierGenreId, out var genreTraduit))
+                        {
+                            nomDuGenre = genreTraduit;
+                        }
+                    }
+
                     var film = new Film
                     {
                         Titre = element.GetProperty("title").GetString() ?? "Sans titre",
                         Description = element.GetProperty("overview").GetString() ?? "Pas de description.",
-                        Genre = "Cinéma", 
+                        Genre = nomDuGenre, 
                         DureeMinutes = randomDuree,
-                        AgeMinimum = randomAge
+                        AgeMinimum = randomAge,
+                        PosterPath = tmdbPosterPath
                     };
 
                     context.Films.Add(film);
                 }
 
                 await context.SaveChangesAsync();
-                Console.WriteLine("--> BDD peuplée avec succès grâce à TMDB !");
+                Console.WriteLine("--> BDD peuplée avec succès avec les vrais genres et affiches !");
             }
             else
             {

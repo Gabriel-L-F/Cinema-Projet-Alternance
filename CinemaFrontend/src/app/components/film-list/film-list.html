@@ -1,21 +1,86 @@
-<div class="cinema-container">
-  <h2>À l'affiche cette semaine</h2>
+<div class="films-container">
+  
+  <div class="form-section">
+    <h2>Ajouter un nouveau film</h2>
+    <form (ngSubmit)="ajouterNouveauFilm()" class="movie-form">
+      
+      <div class="form-group">
+        <label for="titre">Titre du film</label>
+        <input type="text" id="titre" [(ngModel)]="nouveauFilm.titre" name="titre" required placeholder="Ex: Interstellar">
+      </div>
 
-  <button class="btn-seed" (click)="ajouterFilmTest()">Ajouter un film de test</button>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="genre">Genre</label>
+          <select id="genre" [(ngModel)]="nouveauFilm.genre" name="genre" required>
+            <option value="" disabled selected>Choisir un genre</option>
+            <option value="Action">Action</option>
+            <option value="Aventure">Aventure</option>
+            <option value="Animation">Animation</option>
+            <option value="Comédie">Comédie</option>
+            <option value="Drame">Drame</option>
+            <option value="Fantastique">Fantastique</option>
+            <option value="Horreur">Horreur</option>
+            <option value="Science-Fiction">Science-Fiction</option>
+            <option value="Thriller">Thriller</option>
+          </select>
+        </div>
 
-  <div *ngIf="films.length === 0" class="no-films">
-    <p>Aucun film disponible pour le moment ou le serveur est hors ligne.</p>
+        <div class="form-group">
+          <label for="duree">Durée (en minutes)</label>
+          <input type="number" id="duree" [(ngModel)]="nouveauFilm.dureeMinutes" name="dureeMinutes" placeholder="Ex: 169">
+        </div>
+
+        <div class="form-group">
+          <label for="age">Âge minimum</label>
+          <input type="number" id="age" [(ngModel)]="nouveauFilm.ageMinimum" name="ageMinimum" placeholder="Ex: 12">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="poster">Chemin ou URL de l'affiche</label>
+        <input type="text" id="poster" [(ngModel)]="nouveauFilm.posterPath" name="posterPath" placeholder="Ex: /gEU2QG0wOhvY2gC1C6vjIe2YorO.jpg ou URL complète">
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" [(ngModel)]="nouveauFilm.description" name="description" rows="3" placeholder="Résumé du film..."></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">🎬 Enregistrer le film</button>
+    </form>
   </div>
 
-  <div class="films-grid" *ngIf="films.length > 0">
-    <div class="film-card" *ngFor="let film of films">
-      <div class="film-badge">{{ film.genre }}</div>
-      <h3>{{ film.titre }}</h3>
-      <p class="description">{{ film.description }}</p>
-      <div class="film-footer">
-        <span>{{ film.dureeMinutes }} min</span>
-        <span>{{ film.ageMinimum }}+ ans</span>
+  <hr class="separator">
+
+  <div class="header-section">
+    <h2>Ma Collection de Films ({{ films.length }})</h2>
+  </div>
+
+  <div class="films-grid">
+    <div *ngFor="let film of films" class="film-card">
+      <div class="poster-wrapper">
+        <img 
+          *ngIf="film.afficheUrl" 
+          [src]="film.afficheUrl.startsWith('http') ? film.afficheUrl : 'https://image.tmdb.org/t/p/w300' + film.afficheUrl" 
+          alt="Affiche de {{ film.titre }}" 
+          class="film-poster"
+          loading="lazy"
+        />
+        <div *ngIf="!film.afficheUrl" class="no-poster">
+          <span class="icon">🎬</span>
+          <p>Aucun visuel</p>
+        </div>
+      </div>
+
+      <div class="film-info">
+        <h3 class="film-title" [title]="film.titre">{{ film.titre }}</h3>
+        <div class="film-metadata">
+          <span class="film-genre">{{ film.genre }}</span>
+          <span *ngIf="film.dureeMinutes" class="film-duration">{{ film.dureeMinutes }} min</span>
+        </div>
       </div>
     </div>
   </div>
+
 </div>

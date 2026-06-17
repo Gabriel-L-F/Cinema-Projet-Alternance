@@ -1,19 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; 
 import { FilmService, Film } from '../../services/film';
 
 @Component({
   selector: 'app-film-list',
   standalone: true,
-  imports: [CommonModule], 
+  imports: [CommonModule, FormsModule], 
   templateUrl: './film-list.html',
   styleUrl: './film-list.scss'
 })
-
 export class FilmListComponent implements OnInit {
-  films: Film[] = [];
+  films: any[] = [];
 
-  constructor(private filmService: FilmService) {}
+  nouveauFilm: Film = {
+    titre: '',
+    description: '',
+    genre: '',
+    dureeMinutes: 120,
+    ageMinimum: 0,   
+    posterPath: ''
+  };
+
+  constructor(
+    private filmService: FilmService,
+    private cdr: ChangeDetectorRef 
+  ) {}
 
   ngOnInit(): void {
     this.chargerFilms();
@@ -21,8 +33,12 @@ export class FilmListComponent implements OnInit {
 
   chargerFilms(): void {
     this.filmService.getFilms().subscribe({
-      next: (donnees) => {
-        this.films = donnees; 
+      next: (donnees: any[]) => {
+        this.films = donnees.map(film => ({
+          ...film,
+          afficheUrl: film.posterPath || film.poster_path || null
+        }));
+        this.cdr.detectChanges(); 
       },
       error: (erreur) => {
         console.error('Erreur lors de la récupération des films :', erreur);
@@ -30,22 +46,26 @@ export class FilmListComponent implements OnInit {
     });
   }
 
-ajouterFilmTest(): void {
-    const nouveauFilm: Film = {
-      titre: 'Inception',
-      description: 'Un voleur spécialisé dans l\'extraction de secrets enfouis dans le subconscient pendant le rêve est chargé d\'implanter une idée dans l\'esprit d\'un ciblé.',
-      genre: 'Science-Fiction',
-      dureeMinutes: 148,
-      ageMinimum: 12
-    };
+  ajouterNouveauFilm(): void {
+    if (!this.nouveauFilm.titre.trim()) return;
 
-    this.filmService.addFilm(nouveauFilm).subscribe({
+    this.filmService.addFilm(this.nouveauFilm).subscribe({
       next: (filmCree) => {
-        console.log('Film créé avec succès !', filmCree);
-        this.chargerFilms();
+        console.log('Film ajouté avec succès !', filmCree);
+        
+        this.chargerFilms(); 
+        
+        this.nouveauFilm = {
+          titre: '',
+          description: '',
+          genre: '',
+          dureeMinutes: 120,
+          ageMinimum: 0,
+          posterPath: ''
+        };
       },
       error: (erreur) => {
-        console.error('Erreur lors de la création du film :', erreur);
+        console.error('Erreur lors de l\'ajout du film :', erreur);
       }
     });
   }

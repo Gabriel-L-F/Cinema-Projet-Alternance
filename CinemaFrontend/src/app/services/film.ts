@@ -9,6 +9,7 @@ export interface Film {
   genre: string;
   dureeMinutes: number;
   ageMinimum: number;
+  posterPath?: string;
 }
 
 @Injectable({

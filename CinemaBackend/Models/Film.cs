@@ -8,4 +8,5 @@ public class Film
     public string Genre { get; set; } = string.Empty;
     public int DureeMinutes { get; set; }
     public int AgeMinimum { get; set; }
+    public string? PosterPath { get; set; }
 }

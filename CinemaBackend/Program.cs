@@ -23,7 +23,6 @@ builder.Services.AddDbContext<CinemaDbContext>(options =>
 
 builder.Services.AddOpenApi();
 
-
 var app = builder.Build();
 
 app.UseCors("AllowAngular");
@@ -35,17 +34,25 @@ if (app.Environment.IsDevelopment())
 
 app.MapControllers();
 
-
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<CinemaDbContext>();
-    var httpClientFactory = services.GetRequiredService<IHttpClientFactory>();
-    var configuration = services.GetRequiredService<IConfiguration>();
-    
-    var tmdbToken = configuration["ApiSettings:TmdbToken"];
-    
-    await DataSeeder.SeedMoviesAsync(context, httpClientFactory, tmdbToken);
+    try
+    {
+        var context = services.GetRequiredService<CinemaDbContext>();
+        var httpClientFactory = services.GetRequiredService<IHttpClientFactory>();
+        var configuration = services.GetRequiredService<IConfiguration>();
+        
+        var tmdbToken = configuration["ApiSettings:TmdbToken"];
+        
+        Console.WriteLine("--> [Seeder] Début de la tentative de peuplement In-Memory...");
+        
+        DataSeeder.SeedMoviesAsync(context, httpClientFactory, tmdbToken).GetAwaiter().GetResult();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"--> [Erreur Seeder] Impossible d'initialiser les données : {ex.Message}");
+    }
 }
 
 app.Run();
